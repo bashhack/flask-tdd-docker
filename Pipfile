@@ -1,0 +1,28 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-testmon = "==0.9.19"
+pytest-watch = "*"
+pytest-sugar = "*"
+pytest-cov = "*"
+black = "==19.3b0"
+bandit = "*"
+autoflake = "*"
+epc = "*"
+flake8 = "*"
+importmagic = "*"
+pyls-mypy = "*"
+pycodestyle = "*"
+pre-commit = "*"
+python-dotenv = "*"
+
+[packages]
+flask = "==1.1.1"
+flask-restplus = "==0.13.0"
+
+[requires]
+python_version = "3.8"
