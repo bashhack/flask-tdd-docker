@@ -1,0 +1,9 @@
+env-postgres.env
+.idea
+.projectile
+.env
+.envrc
+.git
+.dockerignore
+Dockerfile
+Dockerfile.prod
