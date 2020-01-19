@@ -3,8 +3,10 @@ from sqlalchemy.sql import func
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Boolean, DateTime, Integer, String
 
+from project import db
 
-class User(Model):
+
+class User(db.Model):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
