@@ -19,6 +19,7 @@ pyls-mypy = "*"
 pycodestyle = "*"
 pre-commit = "*"
 python-dotenv = "*"
+pyls-isort = "*"
 
 [packages]
 flask = "==1.1.1"
@@ -26,6 +27,7 @@ flask-restplus = "==0.13.0"
 flask-sqlalchemy = "==2.4.1"
 psycopg2-binary = "==2.8.4"
 flask-shell-ipython = "==0.4.1"
+gunicorn = "==20.0.4"
 
 [requires]
 python_version = "3.8"
