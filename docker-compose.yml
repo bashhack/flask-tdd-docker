@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+
+  users:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ['/usr/src/app/entrypoint.sh']
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 5001:5000
+    env_file:
+      - .flaskenv
+      - .env
+      - env-postgres.env
+    depends_on:
+      - users-db
+
+  users-db:
+    build:
+      context: ./project/db
+      dockerfile: Dockerfile
+    expose:
+      - 5432
+    env_file:
+      - env-postgres.env
