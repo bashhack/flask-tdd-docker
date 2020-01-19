@@ -1,4 +1,3 @@
-from flask_sqlalchemy.model import Model
 from sqlalchemy.sql import func
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Boolean, DateTime, Integer, String
