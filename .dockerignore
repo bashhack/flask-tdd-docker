@@ -1,5 +1,6 @@
 env-postgres.env
 .env
+.flaskenv
 
 .idea
 .projectile
@@ -8,3 +9,5 @@ env-postgres.env
 .dockerignore
 Dockerfile
 Dockerfile.prod
+htmlcov
+.coverage
