@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-import project.api.users
+import project.api.users.views
 
 
 def test_add_user(test_app, monkeypatch):
@@ -13,8 +13,10 @@ def test_add_user(test_app, monkeypatch):
     def mock_add_user(username, email):
         return True
 
-    monkeypatch.setattr(project.api.users, "get_user_by_email", mock_get_user_by_email)
-    monkeypatch.setattr(project.api.users, "add_user", mock_add_user)
+    monkeypatch.setattr(
+        project.api.users.views, "get_user_by_email", mock_get_user_by_email
+    )
+    monkeypatch.setattr(project.api.users.views, "add_user", mock_add_user)
 
     client = test_app.test_client()
     resp = client.post(
@@ -51,8 +53,10 @@ def test_add_duplicate_user(test_app, monkeypatch):
     def mock_add_user(username, email):
         return True
 
-    monkeypatch.setattr(project.api.users, "get_user_by_email", mock_get_user_by_email)
-    monkeypatch.setattr(project.api.users, "add_user", mock_add_user)
+    monkeypatch.setattr(
+        project.api.users.views, "get_user_by_email", mock_get_user_by_email
+    )
+    monkeypatch.setattr(project.api.users.views, "add_user", mock_add_user)
 
     client = test_app.test_client()
     resp = client.post(
@@ -79,7 +83,7 @@ def test_get_user(test_app, monkeypatch):
             "created_date": datetime.now(),
         }
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
 
     client = test_app.test_client()
     resp = client.get(f"/users/1")
@@ -93,7 +97,7 @@ def test_get_user_does_not_exist(test_app, monkeypatch):
     def mock_get_user_by_id(user_id):
         return None
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
 
     client = test_app.test_client()
     resp = client.get("/users/999")
@@ -119,7 +123,7 @@ def test_get_all_users(test_app, monkeypatch):
             },
         ]
 
-    monkeypatch.setattr(project.api.users, "get_all_users", mock_get_all_users)
+    monkeypatch.setattr(project.api.users.views, "get_all_users", mock_get_all_users)
 
     client = test_app.test_client()
     resp = client.get("/users")
@@ -146,8 +150,8 @@ def test_delete_user(test_app, monkeypatch):
     def mock_delete_user(user):
         return True
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
-    monkeypatch.setattr(project.api.users, "delete_user", mock_delete_user)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "delete_user", mock_delete_user)
 
     client = test_app.test_client()
 
@@ -161,7 +165,7 @@ def test_delete_invalid(test_app, monkeypatch):
     def mock_get_user_by_id(user_id):
         return None
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
 
     client = test_app.test_client()
     resp = client.delete("/users/999")
@@ -191,8 +195,8 @@ def test_update_user(test_app, monkeypatch):
     def mock_update_user(user, username, email):
         return True
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
-    monkeypatch.setattr(project.api.users, "update_user", mock_update_user)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "update_user", mock_update_user)
 
     client = test_app.test_client()
     updated_email = "mock@user.com"
@@ -226,7 +230,7 @@ def test_update_user_invalid(
     def mock_get_user_by_id(user_id):
         return None
 
-    monkeypatch.setattr(project.api.users, "get_user_by_id", mock_get_user_by_id)
+    monkeypatch.setattr(project.api.users.views, "get_user_by_id", mock_get_user_by_id)
 
     client = test_app.test_client()
     resp = client.put(
