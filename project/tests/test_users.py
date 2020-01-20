@@ -86,3 +86,27 @@ def test_get_all_users(test_app, test_database, add_user):
     assert "testuser2" in data[1]["username"]
     assert "testuser1@example.com" in data[0]["email"]
     assert "testuser2@example.com" in data[1]["email"]
+
+
+def test_delete_user(test_app, test_database, add_user):
+    test_database.session.query(User).delete()
+    user = add_user("testuser1", "testuser1@example.com")
+    client = test_app.test_client()
+
+    # Confirm user exists...
+    resp = client.get("/users")
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+    assert len(data) == 1
+
+    # Delete the user...
+    resp = client.delete(f"/users/{user.id}")
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+    assert f"{user.email} was removed!" in data["message"]
+
+    # Confirm the user is then removed...
+    resp = client.get("/users")
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+    assert len(data) == 0
