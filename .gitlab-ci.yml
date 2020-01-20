@@ -60,6 +60,6 @@ deploy:
         --tag $HEROKU_REGISTRY_IMAGE
         --file ./Dockerfile.prod
         "."
-    - echo $HEROKU_AUTH_TOKEN | docker login -u _  --password-stdin registry.heroku.com
+    - echo -n $HEROKU_AUTH_TOKEN | docker login -u _  --password-stdin registry.heroku.com
     - docker push $HEROKU_REGISTRY_IMAGE
     - ./release.sh
