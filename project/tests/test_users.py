@@ -65,7 +65,7 @@ def test_get_user(test_app, test_database, add_user):
     assert "testuser@example.com" in data["email"]
 
 
-def test_get_user_incorrect_id(test_app, test_database):
+def test_get_user_does_not_exist(test_app, test_database):
     client = test_app.test_client()
     resp = client.get("/users/999")
     data = json.loads(resp.data.decode())
@@ -110,3 +110,60 @@ def test_delete_user(test_app, test_database, add_user):
     data = json.loads(resp.data.decode())
     assert resp.status_code == 200
     assert len(data) == 0
+
+
+def test_update_user(test_app, test_database, add_user):
+    test_database.session.query(User).delete()
+    user = add_user("testuser1", "testuser1@example.com")
+    client = test_app.test_client()
+    updated_email = "updated-testuser1@example.com"
+    resp = client.put(
+        f"/users/{user.id}",
+        data=json.dumps({"username": "testuser1", "email": updated_email}),
+        content_type="application/json",
+    )
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+    assert f"{user.id} was updated!" in data["message"]
+
+    client = test_app.test_client()
+    resp = client.get(f"/users/{user.id}")
+    data = json.loads(resp.data.decode())
+    assert user.username in data["username"]
+    assert updated_email in data["email"]
+
+
+def test_update_user_invalid_json(test_app, test_database):
+    client = test_app.test_client()
+    resp = client.put(
+        "/users/999", data=json.dumps({}), content_type="application/json"
+    )
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 400
+    assert "Input payload validation failed" in data["message"]
+
+
+def test_update_user_invalid_json_keys(test_app, test_database, add_user):
+    test_database.session.query(User).delete()
+    user = add_user("testuser1", "testuser1@example.com")
+    client = test_app.test_client()
+    resp = client.put(
+        f"/users/{user.id}",
+        data=json.dumps({"username": user.email}),
+        content_type="application/json",
+    )
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 400
+    assert "Input payload validation failed" in data["message"]
+
+
+def test_update_user_does_not_exist(test_app, test_database):
+    client = test_app.test_client()
+    resp = client.put(
+        "/users/999",
+        data=json.dumps({"username": "foo", "email": "bar"}),
+        content_type="application/json",
+    )
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 404
+    assert "User 999 does not exist" in data["message"]
