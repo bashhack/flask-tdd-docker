@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from project import db
 from project.api.models import User
 
@@ -16,24 +18,21 @@ def test_add_user(test_app, test_database):
     assert "testuser@example.com was added!" in data["message"]
 
 
-def test_add_user_invalid_json(test_app, test_database):
-    client = test_app.test_client()
-    resp = client.post("/users", data=json.dumps({}), content_type="application/json")
-    data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
-    assert "Input payload validation failed" in data["message"]
-
-
-def test_add_user_invalid_json_keys(test_app, test_database):
+@pytest.mark.parametrize(
+    "payload, status_code, message",
+    [
+        [{}, 400, "Input payload validation failed"],
+        [{"email": "foo"}, 400, "Input payload validation failed"],
+    ],
+)
+def test_add_user_invalid(test_app, test_database, payload, status_code, message):
     client = test_app.test_client()
     resp = client.post(
-        "/users",
-        data=json.dumps({"email": "testuser@example.com"}),
-        content_type="application/json",
+        "/users", data=json.dumps(payload), content_type="application/json"
     )
     data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
-    assert "Input payload validation failed" in data["message"]
+    assert resp.status_code == status_code
+    assert message in data["message"]
 
 
 def test_add_duplicate_user(test_app, test_database):
@@ -112,6 +111,16 @@ def test_delete_user(test_app, test_database, add_user):
     assert len(data) == 0
 
 
+def test_delete_invalid(test_app, test_database, add_user):
+    test_database.session.query(User).delete()
+    add_user("foo", "bar")
+    client = test_app.test_client()
+    resp = client.delete("/users/999")
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 404
+    assert "User 999 does not exist" in data["message"]
+
+
 def test_update_user(test_app, test_database, add_user):
     test_database.session.query(User).delete()
     user = add_user("testuser1", "testuser1@example.com")
@@ -133,37 +142,21 @@ def test_update_user(test_app, test_database, add_user):
     assert updated_email in data["email"]
 
 
-def test_update_user_invalid_json(test_app, test_database):
+@pytest.mark.parametrize(
+    "user_id, payload, status_code, message",
+    [
+        [1, {}, 400, "Input payload validation failed"],
+        [1, {"email": "testuser1@example.com"}, 400, "Input payload validation failed"],
+        [999, {"username": "foo", "email": "bar"}, 404, "User 999 does not exist"],
+    ],
+)
+def test_update_user_invalid(
+    test_app, test_database, user_id, payload, status_code, message
+):
     client = test_app.test_client()
     resp = client.put(
-        "/users/999", data=json.dumps({}), content_type="application/json"
+        f"/users/{user_id}", data=json.dumps(payload), content_type="application/json"
     )
     data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
-    assert "Input payload validation failed" in data["message"]
-
-
-def test_update_user_invalid_json_keys(test_app, test_database, add_user):
-    test_database.session.query(User).delete()
-    user = add_user("testuser1", "testuser1@example.com")
-    client = test_app.test_client()
-    resp = client.put(
-        f"/users/{user.id}",
-        data=json.dumps({"username": user.email}),
-        content_type="application/json",
-    )
-    data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
-    assert "Input payload validation failed" in data["message"]
-
-
-def test_update_user_does_not_exist(test_app, test_database):
-    client = test_app.test_client()
-    resp = client.put(
-        "/users/999",
-        data=json.dumps({"username": "foo", "email": "bar"}),
-        content_type="application/json",
-    )
-    data = json.loads(resp.data.decode())
-    assert resp.status_code == 404
-    assert "User 999 does not exist" in data["message"]
+    assert resp.status_code == status_code
+    assert message in data["message"]
