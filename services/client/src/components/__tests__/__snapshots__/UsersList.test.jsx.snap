@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<DocumentFragment>
+  <div>
+    <p
+      class="box title is-4 username"
+      data-testid="1"
+    >
+      testuser1
+    </p>
+    <p
+      class="box title is-4 username"
+      data-testid="2"
+    >
+      testuser2
+    </p>
+  </div>
+</DocumentFragment>
+`;

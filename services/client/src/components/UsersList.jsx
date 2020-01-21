@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const UsersList = (props) => {
   return (
@@ -8,6 +9,7 @@ const UsersList = (props) => {
           return (
               <p
                   key={user.id}
+                  data-testid={user.id}
                   className="box title is-4 username"
               >{ user.username }
               </p>
@@ -16,6 +18,10 @@ const UsersList = (props) => {
       }
     </div>
   )
+};
+
+UsersList.propTypes = {
+    users: PropTypes.array.isRequired,
 };
 
 export default UsersList;

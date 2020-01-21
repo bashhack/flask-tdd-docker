@@ -18,6 +18,11 @@ const users = [
     }
 ];
 
+it('renders', () => {
+    const { asFragment } = render(<UsersList users={users}/>);
+    expect(asFragment()).toMatchSnapshot();
+});
+
 it('renders a username', () => {
     const { getByText } = render(<UsersList users={users}/>);
     expect(getByText('testuser1')).toHaveClass('username');
