@@ -58,3 +58,6 @@ dmypy.json
 
 # ENV
 *.env
+
+# Node.js
+node_modules
