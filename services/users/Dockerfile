@@ -3,7 +3,7 @@ FROM python:3.8-slim-buster
 
 
 # install Pipenv and other app dependencies:
-RUN apt-get update && apt-get install python3-dev libffi-dev gcc curl musl-dev netcat-openbsd -y
+RUN apt-get update && apt-get install python3-dev libffi-dev gcc curl musl-dev openssl-dev netcat-openbsd -y
 RUN curl --silent https://bootstrap.pypa.io/get-pip.py | python3.8
 RUN pip3 install pipenv
 
