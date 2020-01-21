@@ -4,7 +4,8 @@ image: docker:stable
 stages:
   - build-users
   - test-users
-  - deploy
+  - build-client
+  - test-client
 
 
 variables:
@@ -75,21 +76,21 @@ test-client:
     - npm run test
 
 
-deploy:
-  stage: deploy
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    HEROKU_APP_NAME: infinite-lowlands-67330
-    HEROKU_REGISTRY_IMAGE: registry.heroku.com/${HEROKU_APP_NAME}/web
-  script:
-    - apk add --no-cache curl
-    - chmod +x ./release.sh
-    - docker build
-        --tag $HEROKU_REGISTRY_IMAGE
-        --file ./Dockerfile.prod
-        "."
-    - echo -n $HEROKU_AUTH_TOKEN | docker login -u _  --password-stdin registry.heroku.com
-    - docker push $HEROKU_REGISTRY_IMAGE
-    - ./release.sh
+# deploy:
+#   stage: deploy
+#   services:
+#     - docker:dind
+#   variables:
+#     DOCKER_DRIVER: overlay2
+#     HEROKU_APP_NAME: infinite-lowlands-67330
+#     HEROKU_REGISTRY_IMAGE: registry.heroku.com/${HEROKU_APP_NAME}/web
+#   script:
+#     - apk add --no-cache curl
+#     - chmod +x ./release.sh
+#     - docker build
+#         --tag $HEROKU_REGISTRY_IMAGE
+#         --file ./Dockerfile.prod
+#         "."
+#     - echo -n $HEROKU_AUTH_TOKEN | docker login -u _  --password-stdin registry.heroku.com
+#     - docker push $HEROKU_REGISTRY_IMAGE
+#     - ./release.sh
