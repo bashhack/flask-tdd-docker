@@ -3,7 +3,6 @@ dcb_no_cache: docker-compose build --no-cache
 dcu: docker-compose up -d
 dcs: docker-compose stop
 dcd: docker-compose down
-drmi: docker rmi $(docker images -q)
 recreate_db: docker-compose exec users python manage.py recreate_db
 seed_db: docker-compose exec users python manage.py seed_db
 access_db: docker-compose exec users-db psql -U postgres
