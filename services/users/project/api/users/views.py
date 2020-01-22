@@ -1,14 +1,9 @@
 from flask.globals import request
 from flask_restplus import Namespace, Resource, fields
 
-from project.api.users.services import (
-    add_user,
-    delete_user,
-    get_all_users,
-    get_user_by_email,
-    get_user_by_id,
-    update_user,
-)
+from project.api.users.services import (add_user, delete_user, get_all_users,
+                                        get_user_by_email, get_user_by_id,
+                                        update_user)
 
 users_namespace = Namespace("users")
 
@@ -22,9 +17,13 @@ user = users_namespace.model(
     },
 )
 
+user_post = users_namespace.inherit(
+    "User post", {"password": fields.String(required=True)}
+)
+
 
 class UserList(Resource):
-    @users_namespace.expect(user, validate=True)
+    @users_namespace.expect(user_post, validate=True)
     @users_namespace.response(201, "<user_email> was added!")
     @users_namespace.response(400, "Sorry. That email already exists.")
     def post(self):
@@ -32,6 +31,7 @@ class UserList(Resource):
         post_data = request.get_json()
         username = post_data.get("username")
         email = post_data.get("email")
+        password = post_data.get("password")
         response_object = {}
 
         user = get_user_by_email(email)
@@ -40,7 +40,7 @@ class UserList(Resource):
             response_object["message"] = "Sorry. That email already exists."
             return response_object, 400
 
-        add_user(username, email)
+        add_user(username, email, password)
         response_object["message"] = f"{email} was added!"
         return response_object, 201
 
