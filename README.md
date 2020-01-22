@@ -4,14 +4,14 @@
 
 ```bash
 function on_leave_dir() {
-  if [ -e .aliases ]; then
+  if [ -e .loc-aliases ]; then
     export OLD_ALIAS_DIR="$PWD"
   fi
 }
 
 function on_enter_dir() {
   if [ -n "$OLD_ALIAS_DIR" ] && ! is_subdirectory "$PWD" "$OLD_ALIAS_DIR" ; then
-    aliases="$OLD_ALIAS_DIR/.aliases"
+    aliases="$OLD_ALIAS_DIR/.loc-aliases"
 
     while IFS=':' read -r key value || [ -n "$key" ]; do
       unalias "$key" > /dev/null 2>&1
@@ -21,10 +21,10 @@ function on_enter_dir() {
     echo "Unloaded local aliases"
   fi
 
-  if [ -e .aliases ]; then
+  if [ -e .loc-aliases ]; then
     while IFS=':' read -r key value || [ -n "$key" ]; do
       alias "$key"="${value##*( )}"
-    done < ".aliases"
+    done < ".loc-aliases"
 
     echo "Loaded local aliases"
   fi
