@@ -10,7 +10,7 @@ def test_add_user(test_app, monkeypatch):
     def mock_get_user_by_email(email):
         return None
 
-    def mock_add_user(username, email):
+    def mock_add_user(username, email, password):
         return True
 
     monkeypatch.setattr(
@@ -21,7 +21,13 @@ def test_add_user(test_app, monkeypatch):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "abxoebvaln",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -50,7 +56,7 @@ def test_add_duplicate_user(test_app, monkeypatch):
     def mock_get_user_by_email(email):
         return True
 
-    def mock_add_user(username, email):
+    def mock_add_user(username, email, password):
         return True
 
     monkeypatch.setattr(
@@ -61,12 +67,24 @@ def test_add_duplicate_user(test_app, monkeypatch):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "abwocknslkj",
+            }
+        ),
         content_type="application/json",
     )
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "wbvoixbwmn",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -202,7 +220,9 @@ def test_update_user(test_app, monkeypatch):
     updated_email = "mock@user.com"
     resp = client.put(
         f"/users/1",
-        data=json.dumps({"username": "mockuser", "email": updated_email}),
+        data=json.dumps(
+            {"username": "mockuser", "email": updated_email}
+        ),  # not sure if pass should be updated here...
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())

@@ -10,7 +10,13 @@ def test_add_user(test_app, test_database):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "qbovwinzwpq",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -39,12 +45,24 @@ def test_add_duplicate_user(test_app, test_database):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "wbvouxxywo",
+            }
+        ),
         content_type="application/json",
     )
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "testuser", "email": "testuser@example.com"}),
+        data=json.dumps(
+            {
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "password": "wbvbvcupiuw",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -53,7 +71,9 @@ def test_add_duplicate_user(test_app, test_database):
 
 
 def test_get_user(test_app, test_database, add_user):
-    user = add_user(username="testuser", email="testuser@example.com")
+    user = add_user(
+        username="testuser", email="testuser@example.com", password="qqutwoei"
+    )
     db.session.add(user)
     db.session.commit()
     client = test_app.test_client()
@@ -74,8 +94,8 @@ def test_get_user_does_not_exist(test_app, test_database):
 
 def test_get_all_users(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    add_user("testuser1", "testuser1@example.com")
-    add_user("testuser2", "testuser2@example.com")
+    add_user("testuser1", "testuser1@example.com", "qoowtuxbff")
+    add_user("testuser2", "testuser2@example.com", "zzshlwwayu")
     client = test_app.test_client()
     resp = client.get("/users")
     data = json.loads(resp.data.decode())
@@ -89,7 +109,7 @@ def test_get_all_users(test_app, test_database, add_user):
 
 def test_delete_user(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    user = add_user("testuser1", "testuser1@example.com")
+    user = add_user("testuser1", "testuser1@example.com", "woivuuwbwqp")
     client = test_app.test_client()
 
     # Confirm user exists...
@@ -113,7 +133,7 @@ def test_delete_user(test_app, test_database, add_user):
 
 def test_delete_invalid(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    add_user("foo", "bar")
+    add_user("foo", "bar", "foobar")
     client = test_app.test_client()
     resp = client.delete("/users/999")
     data = json.loads(resp.data.decode())
@@ -123,12 +143,14 @@ def test_delete_invalid(test_app, test_database, add_user):
 
 def test_update_user(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    user = add_user("testuser1", "testuser1@example.com")
+    user = add_user("testuser1", "testuser1@example.com", "foobar")
     client = test_app.test_client()
     updated_email = "updated-testuser1@example.com"
     resp = client.put(
         f"/users/{user.id}",
-        data=json.dumps({"username": "testuser1", "email": updated_email}),
+        data=json.dumps(
+            {"username": "testuser1", "email": updated_email}
+        ),  # not sure if I should add pass here
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
