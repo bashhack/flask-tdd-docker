@@ -186,6 +186,7 @@ def test_password_ignored_in_update_user(test_app, test_database, add_user):
     )
     data = json.loads(resp.data.decode())
     assert resp.status_code == 200
+    assert f"{user.id} was updated!" in data["message"]
 
     user = get_user_by_id(user.id)
     assert bcrypt.check_password_hash(user.password, original_password)

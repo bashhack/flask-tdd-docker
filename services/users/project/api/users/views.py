@@ -1,9 +1,14 @@
 from flask.globals import request
 from flask_restplus import Namespace, Resource, fields
 
-from project.api.users.services import (add_user, delete_user, get_all_users,
-                                        get_user_by_email, get_user_by_id,
-                                        update_user)
+from project.api.users.services import (
+    add_user,
+    delete_user,
+    get_all_users,
+    get_user_by_email,
+    get_user_by_id,
+    update_user,
+)
 
 users_namespace = Namespace("users")
 
