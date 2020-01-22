@@ -109,6 +109,7 @@ def test_get_user(test_app, monkeypatch):
     assert resp.status_code == 200
     assert "mockuser" in data["username"]
     assert "mock@user.com" in data["email"]
+    assert "password" not in data
 
 
 def test_get_user_does_not_exist(test_app, monkeypatch):
@@ -152,6 +153,8 @@ def test_get_all_users(test_app, monkeypatch):
     assert "mockuser2" in data[1]["username"]
     assert "mock@user1.com" in data[0]["email"]
     assert "mock@user2.com" in data[1]["email"]
+    assert "password" not in data[0]
+    assert "password" not in data[1]
 
 
 def test_delete_user(test_app, monkeypatch):

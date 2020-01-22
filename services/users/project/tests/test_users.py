@@ -2,8 +2,9 @@ import json
 
 import pytest
 
-from project import db
+from project import bcrypt, db
 from project.api.users.models import User
+from project.api.users.services import get_user_by_id
 
 
 def test_add_user(test_app, test_database):
@@ -82,6 +83,7 @@ def test_get_user(test_app, test_database, add_user):
     assert resp.status_code == 200
     assert "testuser" in data["username"]
     assert "testuser@example.com" in data["email"]
+    assert "password" not in data
 
 
 def test_get_user_does_not_exist(test_app, test_database):
@@ -105,6 +107,8 @@ def test_get_all_users(test_app, test_database, add_user):
     assert "testuser2" in data[1]["username"]
     assert "testuser1@example.com" in data[0]["email"]
     assert "testuser2@example.com" in data[1]["email"]
+    assert "password" not in data[0]
+    assert "password" not in data[1]
 
 
 def test_delete_user(test_app, test_database, add_user):
@@ -148,9 +152,7 @@ def test_update_user(test_app, test_database, add_user):
     updated_email = "updated-testuser1@example.com"
     resp = client.put(
         f"/users/{user.id}",
-        data=json.dumps(
-            {"username": "testuser1", "email": updated_email}
-        ),  # not sure if I should add pass here
+        data=json.dumps({"username": "testuser1", "email": updated_email}),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -162,6 +164,32 @@ def test_update_user(test_app, test_database, add_user):
     data = json.loads(resp.data.decode())
     assert user.username in data["username"]
     assert updated_email in data["email"]
+
+
+def test_password_ignored_in_update_user(test_app, test_database, add_user):
+    test_database.session.query(User).delete()
+    original_password = "abxoekwnb"
+    other_password = "wbc0xyabbw"
+    user = add_user("testuser1", "testuser1@example.com", original_password)
+    client = test_app.test_client()
+    updated_email = "updated-testuser1@example.com"
+    resp = client.put(
+        f"/users/{user.id}",
+        data=json.dumps(
+            {
+                "username": "testuser1",
+                "email": updated_email,
+                "password": other_password,
+            }
+        ),
+        content_type="application/json",
+    )
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+
+    user = get_user_by_id(user.id)
+    assert bcrypt.check_password_hash(user.password, original_password)
+    assert not bcrypt.check_password_hash(user.password, other_password)
 
 
 @pytest.mark.parametrize(
