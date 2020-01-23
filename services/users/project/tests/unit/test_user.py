@@ -248,7 +248,7 @@ def test_update_user(test_app, monkeypatch):
     ],
 )
 def test_update_user_invalid(
-    test_app, monkeypatch, user_id, payload, status_code, message
+        test_app, monkeypatch, user_id, payload, status_code, message
 ):
     def mock_get_user_by_id(user_id):
         return None
