@@ -202,7 +202,7 @@ def test_password_ignored_in_update_user(test_app, test_database, add_user):
     ],
 )
 def test_update_user_invalid(
-        test_app, test_database, user_id, payload, status_code, message
+    test_app, test_database, user_id, payload, status_code, message
 ):
     client = test_app.test_client()
     resp = client.put(
