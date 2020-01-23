@@ -2,7 +2,6 @@ import datetime
 import os
 
 import jwt
-from flask import current_app
 from flask.globals import current_app
 from sqlalchemy.sql import func
 from sqlalchemy.sql.schema import Column
@@ -44,7 +43,8 @@ class User(db.Model):
 
         # expiration, issued at, subject
         payload = {
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=seconds),
+            "exp": datetime.datetime.utcnow()
+            + datetime.timedelta(days=0, seconds=seconds),
             "iat": datetime.datetime.utcnow(),
             "sub": user_id,
         }
