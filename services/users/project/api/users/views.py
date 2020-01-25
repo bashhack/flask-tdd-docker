@@ -23,7 +23,7 @@ user = users_namespace.model(
 )
 
 user_post = users_namespace.inherit(
-    "User post", {"password": fields.String(required=True)}
+    "User post", user, {"password": fields.String(required=True)}
 )
 
 
