@@ -8,21 +8,26 @@ afterEach(cleanup);
 const props = {
   handleLoginFormSubmit: () => {
     return true;
+  },
+  isAuthenticated: () => {
+    return false;
   }
 };
 
 it("renders", () => {
-  const { asFragment } = render(<LoginForm {...props} />);
+  const { asFragment } = renderWithRouter(<LoginForm {...props} />);
   expect(asFragment()).toMatchSnapshot();
 });
 
 it("renders properly", () => {
-  const { getByText } = render(<LoginForm {...props} />);
+  const { getByText } = renderWithRouter(<LoginForm {...props} />);
   expect(getByText("Log In")).toHaveClass("title");
 });
 
 it("renders with default propers", () => {
-  const { getByLabelText, getByText } = render(<LoginForm {...props} />);
+  const { getByLabelText, getByText } = renderWithRouter(
+    <LoginForm {...props} />
+  );
 
   const emailInput = getByLabelText("Email");
   expect(emailInput).toHaveAttribute("type", "email");

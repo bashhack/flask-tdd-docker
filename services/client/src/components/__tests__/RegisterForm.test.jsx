@@ -8,21 +8,26 @@ afterEach(cleanup);
 const props = {
   handleRegisterFormSubmit: () => {
     return true;
+  },
+  isAuthenticated: () => {
+    return false;
   }
 };
 
 it("renders", () => {
-  const { asFragment } = render(<RegisterForm {...props} />);
+  const { asFragment } = renderWithRouter(<RegisterForm {...props} />);
   expect(asFragment()).toMatchSnapshot();
 });
 
 it("renders properly", () => {
-  const { getByText } = render(<RegisterForm {...props} />);
+  const { getByText } = renderWithRouter(<RegisterForm {...props} />);
   expect(getByText("Register")).toHaveClass("title");
 });
 
 it("renders with default props", () => {
-  const { getByLabelText, getByText } = render(<RegisterForm {...props} />);
+  const { getByLabelText, getByText } = renderWithRouter(
+    <RegisterForm {...props} />
+  );
 
   const usernameInput = getByLabelText("Username");
   expect(usernameInput).toHaveAttribute("type", "text");

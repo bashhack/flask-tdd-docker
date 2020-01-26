@@ -35,12 +35,37 @@ class App extends Component {
       });
   }
 
-  isAuthenticated() {
-    if (this.state.accessToken) {
-      return true;
+  validRefresh() {
+    const refreshToken = window.localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      axios
+        .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/auth/refresh`, {
+          refresh_token: refreshToken
+        })
+        .then(res => {
+          this.setState({ accessToken: res.data.access_token });
+          this.getUsers();
+          window.localStorage.setItem("refreshToken", res.data.refresh_token);
+          return true;
+        })
+        .catch(err => {
+          return false;
+        });
     }
     return false;
   }
+
+  logoutUser = () => {
+    window.localStorage.removeItem("refreshToken");
+    this.setState({ accessToken: null });
+  };
+
+  isAuthenticated = () => {
+    if (this.state.accessToken || this.validRefresh()) {
+      return true;
+    }
+    return false;
+  };
 
   addUser = data => {
     axios
@@ -70,6 +95,8 @@ class App extends Component {
       .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/auth/login`, data)
       .then(res => {
         this.setState({ accessToken: res.data.access_token });
+        this.getUsers();
+        window.localStorage.setItem("refreshToken", res.data.refresh_token);
       })
       .catch(err => {
         console.log(err);
@@ -79,7 +106,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <NavBar title={this.state.title} />
+        <NavBar title={this.state.title} logoutUser={this.logoutUser} />
         <section className="section">
           <div className="container">
             <div className="columns">
@@ -108,6 +135,7 @@ class App extends Component {
                     render={() => (
                       <RegisterForm
                         handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
                       />
                     )}
                   />
@@ -117,6 +145,7 @@ class App extends Component {
                     render={() => (
                       <LoginForm
                         handleLoginFormSubmit={this.handleLoginFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
                       />
                     )}
                   />
