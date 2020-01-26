@@ -1,30 +1,35 @@
+import jwt
 from flask import request
 from flask_bcrypt import check_password_hash
 from flask_restplus import Namespace, Resource, fields
 
-from project.api.users.services import add_user, get_user_by_email
+from project.api.users.models import User
+from project.api.users.services import add_user, get_user_by_email, get_user_by_id
 
-auth_namespace = Namespace("auth")
+auth_namespace = Namespace("Auth")
 
 user = auth_namespace.model(
-    "User",
+    "Auth User",
     {"username": fields.String(required=True), "email": fields.String(required=True)},
 )
 
 full_user = auth_namespace.inherit(
-    "Full User", user, {"password": fields.String(required=True)}
+    "Registration User", user, {"password": fields.String(required=True)}
 )
 
 login = auth_namespace.model(
-    "User",
+    "Login User",
     {"email": fields.String(required=True), "password": fields.String(required=True)},
 )
 refresh = auth_namespace.model(
-    "Refresh", {"refresh_token": fields.String(required=True)}
+    "Refresh Token", {"refresh_token": fields.String(required=True)}
 )
 tokens = auth_namespace.inherit(
-    "Access and refresh_tokens", refresh, {"access_token": fields.String(required=True)}
+    "Access and Refresh Tokens", refresh, {"access_token": fields.String(required=True)}
 )
+
+auth_parser = auth_namespace.parser()
+auth_parser.add_argument("Authorization", location="headers")
 
 
 class Register(Resource):
@@ -41,6 +46,8 @@ class Register(Resource):
         user = get_user_by_email(email)
         if user:
             auth_namespace.abort(400, "Sorry. That email already exists.")
+
+        # auth_namespace.abort(400, "Sorry. That username already exists.")
         user = add_user(username, email, password)
         return user, 201
 
@@ -70,13 +77,58 @@ class Login(Resource):
 
 
 class Refresh(Resource):
+    @auth_namespace.marshal_with(tokens)
+    @auth_namespace.expect(refresh, vaildate=True)
+    @auth_namespace.response(200, "Success")
+    @auth_namespace.response(401, "Invalid token")
     def post(self):
-        pass
+        post_data = request.get_json()
+        refresh_token = post_data.get("refresh_token")
+        response_object = {}
+
+        try:
+            resp = User.decode_token(refresh_token)
+            user = get_user_by_id(resp)
+            if not user:
+                auth_namespace.abort(401, "Invalid token")
+
+            access_token = user.encode_token(user.id, "access")
+            refresh_token = user.encode_token(user.id, "refresh")
+
+            response_object = {
+                "access_token": access_token.decode(),
+                "refresh_token": refresh_token.decode(),
+            }
+            return response_object, 200
+        except jwt.ExpiredSignatureError:
+            auth_namespace.abort(401, "Signature expired. Please log in again.")
+            return "Signature expired. Please log in again."
+        except jwt.InvalidTokenError:
+            auth_namespace.abort(401, "Invalid token. Please log in again.")
 
 
 class Status(Resource):
-    def post(self):
-        pass
+    @auth_namespace.marshal_with(user)
+    @auth_namespace.response(200, "Success")
+    @auth_namespace.response(401, "Invalid token")
+    @auth_namespace.expect(auth_parser)
+    def get(self):
+        auth_header = request.headers.get("Authorization")
+        if auth_header:
+            try:
+                access_token = auth_header.split(" ")[1]
+                resp = User.decode_token(access_token)
+                user = get_user_by_id(resp)
+                if not user:
+                    auth_namespace.abort(401, "Invalid token")
+                return user, 200
+            except jwt.ExpiredSignatureError:
+                auth_namespace.abort(401, "Signature expired. Please log in again.")
+                return "Signature expired. Please log in again."
+            except jwt.InvalidTokenError:
+                auth_namespace.abort(401, "Invalid token. Please log in again.")
+        else:
+            auth_namespace.abort(403, "Token required")
 
 
 auth_namespace.add_resource(Register, "/register")

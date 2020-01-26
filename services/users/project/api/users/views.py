@@ -10,7 +10,7 @@ from project.api.users.services import (
     update_user,
 )
 
-users_namespace = Namespace("users")
+users_namespace = Namespace("Users")
 
 user = users_namespace.model(
     "User",
@@ -23,7 +23,7 @@ user = users_namespace.model(
 )
 
 user_post = users_namespace.inherit(
-    "User post", user, {"password": fields.String(required=True)}
+    "Full User", user, {"password": fields.String(required=True)}
 )
 
 

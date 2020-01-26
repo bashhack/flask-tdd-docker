@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource
 
-ping_namespace = Namespace("ping")
+ping_namespace = Namespace("Ping")
 
 
 class Ping(Resource):
