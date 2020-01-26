@@ -15,7 +15,8 @@ class App extends Component {
 
     this.state = {
       users: [],
-      title: "Flask TDD Docker"
+      title: "Flask TDD Docker",
+      accessToken: null
     };
   }
 
@@ -40,6 +41,28 @@ class App extends Component {
       .then(res => {
         this.getUsers();
         this.setState({ username: "", email: "" });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  handleRegisterFormSubmit = data => {
+    axios
+      .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/auth/register`, data)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  handleLoginFormSubmit = data => {
+    axios
+      .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/auth/login`, data)
+      .then(res => {
+        console.log(res.data);
       })
       .catch(err => {
         console.log(err);
@@ -72,8 +95,24 @@ class App extends Component {
                     )}
                   />
                   <Route exact path="/about" component={About} />
-                  <Route exact path="/register" component={RegisterForm} />
-                  <Route exact path="/login" component={LoginForm} />
+                  <Route
+                    exact
+                    path="/register"
+                    render={() => (
+                      <RegisterForm
+                        handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                      />
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/login"
+                    render={() => (
+                      <LoginForm
+                        handleLoginFormSubmit={this.handleLoginFormSubmit}
+                      />
+                    )}
+                  />
                 </Switch>
               </div>
             </div>
