@@ -1,0 +1,168 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<DocumentFragment>
+  <div>
+    <nav
+      aria-label="main navigation"
+      class="navbar is-dark"
+      role="navigation"
+    >
+      <section
+        class="container"
+      >
+        <div
+          class="navbar-brand"
+        >
+          <a
+            class="navbar-item nav-title"
+            href="/"
+            style="font-weight: bold;"
+          >
+            Flask TDD Docker
+          </a>
+          <span
+            class="nav-toggle navbar-burger"
+          >
+            <span />
+            <span />
+            <span />
+          </span>
+        </div>
+        <div
+          class="navbar-menu"
+        >
+          <div
+            class="navbar-start"
+          >
+            <a
+              class="navbar-item"
+              href="/about"
+            >
+              About
+            </a>
+            <a
+              class="navbar-item"
+              href="/status"
+            >
+              User Status
+            </a>
+          </div>
+          <div
+            class="navbar-end"
+          >
+            <a
+              class="navbar-item"
+              href="/register"
+            >
+              Register
+            </a>
+            <a
+              class="navbar-item"
+              href="/login"
+            >
+              Log In
+            </a>
+            <a
+              class="navbar-item"
+              href="/logout"
+            >
+              Log Out
+            </a>
+          </div>
+        </div>
+      </section>
+    </nav>
+    <section
+      class="section"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="columns"
+        >
+          <div
+            class="column is-half"
+          >
+            <br />
+            <div>
+              <h1
+                class="title is-1 is-1"
+              >
+                Users
+              </h1>
+              <hr />
+              <br />
+              <form>
+                <div
+                  class="field"
+                >
+                  <label
+                    class="label"
+                    for="input-username"
+                  >
+                    Username
+                  </label>
+                  <input
+                    class="input"
+                    id="input-username"
+                    name="username"
+                    placeholder="Enter a username"
+                    type="text"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="field"
+                >
+                  <label
+                    class="label"
+                    for="input-email"
+                  >
+                    Email
+                  </label>
+                  <input
+                    class="input"
+                    id="input-email"
+                    name="email"
+                    placeholder="Enter an email address"
+                    type="email"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="field"
+                >
+                  <label
+                    class="label"
+                    for="input-password"
+                  >
+                    Password
+                  </label>
+                  <input
+                    class="input"
+                    id="input-password"
+                    name="password"
+                    placeholder="Enter a password"
+                    type="password"
+                    value=""
+                  />
+                </div>
+                <input
+                  class="button is-primary"
+                  type="submit"
+                  value="Submit"
+                />
+              </form>
+              <hr />
+              <br />
+              <div />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</DocumentFragment>
+`;
