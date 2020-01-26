@@ -35,6 +35,13 @@ class App extends Component {
       });
   }
 
+  isAuthenticated() {
+    if (this.state.accessToken) {
+      return true;
+    }
+    return false;
+  }
+
   addUser = data => {
     axios
       .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/users`, data)
@@ -62,7 +69,7 @@ class App extends Component {
     axios
       .post(`${process.env.REACT_APP_USERS_SERVICE_URL}/auth/login`, data)
       .then(res => {
-        console.log(res.data);
+        this.setState({ accessToken: res.data.access_token });
       })
       .catch(err => {
         console.log(err);
