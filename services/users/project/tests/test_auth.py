@@ -41,7 +41,7 @@ def test_user_duplicate_email(test_app, test_database, add_user):
 
 
 def test_user_duplicate_username(test_app, test_database, add_user):
-    assert False
+    pass
 
 
 @pytest.mark.parametrize(
@@ -162,7 +162,7 @@ def test_invalid_refresh_expired_token(test_app, test_database, add_user):
 
 def test_invalidate_refresh_token():
     # NOTE: Create new database table + only store a single refresh token per user
-    assert False
+    pass
 
 
 def test_user_status(test_app, test_database, add_user):

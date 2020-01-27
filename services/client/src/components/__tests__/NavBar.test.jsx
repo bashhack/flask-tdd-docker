@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 const props = {
     title: "Hello, World!",
-    logoutUser: () => { return true },
+    logoutUser: () => { return true; },
 };
 
 it("renders a title", () => {
